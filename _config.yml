@@ -56,7 +56,7 @@ duoshuo_share: true                     # set to false if you want to use Commen
 
 # gitment settings
 gitment_client_id: 'd8c4689fdfee771347b7'
-gitment_client_secret: 'd27a85a7e8d6b606475985b64edfce3a37ddc1f6',
+gitment_client_secret: 'd27a85a7e8d6b606475985b64edfce3a37ddc1f6'
 
 
 # Analytics settings
