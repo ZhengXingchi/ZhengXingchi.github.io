@@ -92,7 +92,7 @@ layout: default
 
 
                 {% if site.gitment_client_id %}
-                <div id="gitmentContainer"></div>
+                <div id="container"></div>
                 <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
                 <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
                 <script>
@@ -100,11 +100,11 @@ layout: default
                     owner: 'ZhengXC90',
                     repo: 'https://github.com/ZhengXC90/ZhengXC90.github.io',
                     oauth: {
-                        client_id: 'd8c4689fdfee771347b7',
-                        client_secret: 'd27a85a7e8d6b606475985b64edfce3a37ddc1f6',
+                        client_id: '{{site.gitment_client_id}}',
+                        client_secret: '{{site.gitment_client_secret}},
                     },
                 });
-                gitment.render('gitmentContainer');
+                gitment.render('container');
                 </script>
                 {% endif %}
 
