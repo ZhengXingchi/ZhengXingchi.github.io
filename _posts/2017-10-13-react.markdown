@@ -1,0 +1,19 @@
+---
+layout:     post
+title:      "react"
+subtitle:   "react实战练习"
+date:       2017-10-13
+author:     "ZhengXC"
+header-img: "img/post-bg-js-version.jpg"
+tags:
+    - 前端开发
+    - react
+---
+
+
+## 配置环境
+- 安装NodeJS以及安装yoeman`npm install -g yo`
+查看yo版本`yo --version`
+
+- 安装react-webpack`npm install -g generator-react-webpack`
+查看react-webpack版本`npm ls -g --depth=1 2>/dev/null | grep generator-`
