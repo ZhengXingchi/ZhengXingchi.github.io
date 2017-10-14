@@ -5,7 +5,7 @@ header-img: img/home-bg.jpg
 email: Zheng_Xingchi@outlook.com
 description: "天才与魔鬼，前端与美术，在古狼堡守候黑夜| 这里是 @郑星驰 的个人博客，与你一起发现更大的世界。"
 keyword: "郑星驰, Web, JavaScript, 前端, 设计"
-#url: "http://huangxuan.me"              # your host, for absolute URL
+url: "http://zhengxc.xyz"             # your host, for absolute URL
 baseurl: ""         # for example, '/blog' if your blog hosted on 'host/blog'
 
 
