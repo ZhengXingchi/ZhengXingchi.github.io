@@ -1,0 +1,25 @@
+---
+layout:     post
+title:      "egret"
+subtitle:   ""
+date:       2017-10-18
+author:     "ZhengXC"
+header-img: "img/post-bg-js-version.jpg"
+tags:
+    - 前端开发
+---
+
+## 开发环境
+下载[Egret Engine 4.1.0](http://www.egret.com/api/download/index?app=EgretEngine&v=4.1.0&f=download&ext=exe),并且在工具栏安装Egret Wing 3 4.0.3版本。
+
+## 创建项目
+用Egret Wing3新建项目会报错路径不存在(把磁盘中所有关于egret的文件删除重装egret?)，只好用命令行创建
+`egret create HelloWorld`
+来创建我们上面的是默认的游戏项目，如果有特殊需要可以加入参数--type empty|game|gui|eui来指定不同的项目。
+如果需要设置项目的旋转和缩放模式，需要在项目内来修改，在下面会介绍。
+
+## 踩坑
+- 找不到 preLaunchTask“build”
+这个问题的原因是 调试之前一般要 执行一遍编译，但是在 tasks.json 中没有定义名字为 build 的 task，有两个办法，删掉 perebuild这个字段，直接调试，自己控制是否编译。或者在 tasks中添加 name是 build 的task,具体参见[Egret社区](http://bbs.egret.com/thread-20899-1-1.html)
+
+配置tasks.json可以参考[tasks.json配置](http://edn.egret.com/cn/docs/page/1027#任务配置)或者采用egret wing菜单 插件 -> Egret 项目工具 -> 初始化 Egret 项目默认的配置。
