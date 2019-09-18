@@ -2,7 +2,7 @@
 layout:     post
 title:      "javascript一天一练01"
 subtitle:   "new的使用"
-date:       2017-10-18
+date:       2019-09-18
 author:     "ZhengXC"
 header-img: "img/post-bg-js-version.jpg"
 tags:
