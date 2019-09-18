@@ -41,7 +41,7 @@ else
 `
 
 
-##2.设计函数实现原生new
+## 2.设计函数实现原生new
 ```
 function New () {
   let obj = new Object();
