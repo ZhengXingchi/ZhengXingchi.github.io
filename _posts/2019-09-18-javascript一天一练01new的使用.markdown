@@ -1,7 +1,7 @@
 ---
 layout:     post
-title:      "egret"
-subtitle:   ""
+title:      "javascript一天一练01"
+subtitle:   "new的使用"
 date:       2017-10-18
 author:     "ZhengXC"
 header-img: "img/post-bg-js-version.jpg"
