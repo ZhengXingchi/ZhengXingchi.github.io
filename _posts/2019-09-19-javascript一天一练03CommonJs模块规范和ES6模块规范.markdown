@@ -11,7 +11,7 @@ tags:
 
 
 ## CommonJs模块规范
-1. exports、module.exports的区别
+#### 1. exports、module.exports的区别
 `module`和`exports`是`Node.js`给每个js文件内置的两个对象。可以通过`console.log(module)`和`console.log(exports)`打印出来。如果你在`main.js`中写入下面两行，然后运行`$ node main.js`:
 
 ```
@@ -47,7 +47,7 @@ let people = require('./people');
 console.log(people);//输出：{name: '萤火虫叔叔'}
 ```
 
-2. 在node.js中，如果引入模块直接通过require方式引入，问题是这种方式其实是在运行时加载相应模块整体，哪怕前面只引用了其中一个方法
+#### 2. 在node.js中，如果引入模块直接通过require方式引入，问题是这种方式其实是在运行时加载相应模块整体，哪怕前面只引用了其中一个方法
 ```
 const {join,basename} = require ('path');  
 /*require后的路径如果为/开头，为绝对路径 ./为相对路径
@@ -61,7 +61,7 @@ const basename = _path.basename;
 
 ## es6模块规范
 新建两个文件：a.js, b.js。a.js用于导出模块，b.js用户导入模块。两个文件放在同一目录下。
-1. export default导出
+#### 1. export default导出
 ```
 //a.js
 const Programmer = {name: 'UncleFirefly',age:25}
@@ -75,7 +75,7 @@ export default导出对应的导入：
 import Programmer from './a.js'
 ```
 
-2. export导出
+#### 2. export导出
 ```
 //a.js
 const uncle = {name: 'UncleFirefly',age:25}
@@ -89,7 +89,7 @@ import {uncle, aunt} from './a.js'
 ```
 
 
-3. export和export default的区别
+#### 3. export和export default的区别
 ```
 //a.js
 const Programmer = {name: 'UncleFirefly',age:25}
@@ -125,7 +125,8 @@ export {uncle, aunt}
   - 带{}的导入
 本质上按照属性key值导入exports中对应的属性值。
 
-4. 值得一提的是ES6模块的设计思想是尽量的静态化，使得编译时就能确定模块的依赖关系，以及输入和输出的变量。所以import在编译时就已经运行，它也就具有了声明提升效果。
+#### 4. 其他
+值得一提的是ES6模块的设计思想是尽量的静态化，使得编译时就能确定模块的依赖关系，以及输入和输出的变量。所以import在编译时就已经运行，它也就具有了声明提升效果。
 export命令规定的是对外的接口，必须与模块内部的变量建立一一对应关系，不能直接输出常量。
 在一个文件或模块中，export、import可以有多个，export default仅有一个。
 
