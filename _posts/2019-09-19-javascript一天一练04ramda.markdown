@@ -11,6 +11,12 @@ tags:
 
 
 
+## 参考资料
+[Ramda中文手册](http://ramda.cn)
+[Ramda 函数库参考教程](http://www.ruanyifeng.com/blog/2017/03/ramda.html)
+
+
+
 
 
 
