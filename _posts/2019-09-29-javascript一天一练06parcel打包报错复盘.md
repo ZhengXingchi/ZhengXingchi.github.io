@@ -99,6 +99,24 @@ Will enable again once this bug fixed. Thanks!
 参考自[Parse error with CSS custom properties with default values including a nested calc #77](https://github.com/postcss/postcss-calc/issues/77)
 
 
+## 缺少babel
+
+```
+(node:28079) UnhandledPromiseRejectionWarning: /demo/server/middlewares/common.js:1
+import bodyParse from 'koa-bodyparser'
+       ^^^^^^^^^
+
+SyntaxError: Unexpected identifier
+```
+
+缺少babel的支持
+```
+require('babel-core/register')()
+require('babel-polyfill')
+```
+或者引入`transform-runtime`babel插件
+
+
 
 
 
