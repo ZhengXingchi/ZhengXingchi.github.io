@@ -11,15 +11,21 @@ tags:
 
 
 ## postcss
-`/demo/node_modules/antd/dist/antd.css:undefined:undefined: Parse error on line 1: 
+
+报错如下：
+
+```
+/demo/node_modules/antd/dist/antd.css:undefined:undefined: Parse error on line 1: 
 384px - 16px 24px * 2 -...
 -------------^
-Expecting end of input, "RPAREN", "ADD", "SUB", "MUL", "DIV", got unexpected "LENGTH"`
+Expecting end of input, "RPAREN", "ADD", "SUB", "MUL", "DIV", got unexpected "LENGTH"
+```
+
 
 
 
 总结观点如下：
-1. antd版本好像@3.0.0版本有着问题，可以考虑将其升级为
+#### 1.antd版本好像@3.0.0版本有着问题，可以考虑将其升级为
 ```
 "antd": {
     "version": "3.9.1",
@@ -28,6 +34,7 @@ Expecting end of input, "RPAREN", "ADD", "SUB", "MUL", "DIV", got unexpected "LE
 }
 ```
 其中有人说他有过相似的问题贴上
+
 ```
 Btw I have the very same problem without having nested variables :
 
@@ -54,11 +61,12 @@ works normally.
 ```
 
 
-我在使用嵌套变量的时候出现类似问题，我寻思是因为嵌套的calc之间没有空格导致报错，修改以后就工作正常了。
+翻译如下：我在使用嵌套变量的时候出现类似问题，我寻思是因为嵌套的calc之间没有空格导致报错，修改以后就工作正常了。
 
 
-2. 取消postcss关于calc的功能
+#### 2.取消postcss关于calc的功能
 在package.json中添加
+
 ```
   "cssnano": {
     "preset": [
@@ -71,7 +79,8 @@ works normally.
 ```
 
 
-原话如下
+原话如下:
+
 ```
 As a workaround, disable postcss-calc in package.json to pass gatsby build in my case.
 
