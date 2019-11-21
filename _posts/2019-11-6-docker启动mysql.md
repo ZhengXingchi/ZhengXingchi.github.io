@@ -22,7 +22,7 @@ tags:
 
 2. ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'newpassword'
 
-3. 如果还不行`firewall-cmd --add-port=3306/tcp`  （放开3306的端口）`firewall-cmd reload `
+3. 如果还不行`firewall-cmd --add-port=3306/tcp --permanent`  （放开3306的端口）`firewall-cmd reload `
 或者
 `sudo systemctl stop firewalld` （关闭防火墙）
  
