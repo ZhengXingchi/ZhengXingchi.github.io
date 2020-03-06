@@ -32,6 +32,10 @@ file:/Applications/Xcode.app/Contents/Developer/usr/share/git-core/gitconfig    
 git  config --global  credential.helper  store 
 
 
+## 用户凭据方式
+控制面板\用户帐户和家庭安全\凭据管理器
+
+
 
  
  
