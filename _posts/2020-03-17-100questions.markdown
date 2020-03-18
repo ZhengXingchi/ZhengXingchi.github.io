@@ -1,0 +1,510 @@
+---
+layout:     post
+title:      "100questions"
+date:       2020-03-17
+author:     "ZhengXC"
+header-img: "img/post-bg-js-version.jpg"
+tags:
+    - 前端开发
+---
+
+# 1. 写 React / Vue 项目时为什么要在列表组件中写 key，其作用是什么
+```md
+answer:
+1. key是给每一个vnode的唯一id,可以依靠key,更准确, 更快的拿到oldVnode中对应的vnode节点。
+2. 没有key的情况下可以对节点就地复用，提高性能。这种模式会带来一些隐藏的副作用，比如可能不会产生过渡效果，或者在某些节点有绑定数据（表单）状态，会出现状态错位。VUE文档也说明了 这个默认的模式是高效的，但是只适用于不依赖子组件状态或临时 DOM 状态 (例如：表单输入值) 的列表渲染输出。
+3. 在不带key的情况下，判断sameVnode时因为a.key和b.key都是undefined，对于列表渲染来说已经可以判断为相同节点然后调用patchVnode了，实际根本不会进入到答主给的else代码，也就无从谈起“带key比不带key时diff算法更高效”了。然后，官网推荐推荐的使用key，应该理解为“使用唯一id作为key”。因为index作为key，和不带key的效果是一样的。index作为key时，每个列表项的index在变更前后也是一样的，都是直接判断为sameVnode然后复用。说到底，key的作用就是更新组件时判断两个节点是否相同。相同就复用，不相同就删除旧的创建新的。
+```
+
+# 2. ['1','2','3'].map(parseInt)
+=> [1 NAN NAN]
+变形题
+```js
+let unary = fn => val => fn(val)
+let parse = unary(parseInt)
+console.log(['1.1', '2', '0.3'].map(parse))
+=>[1,2,0]
+```
+
+# 3. 什么是防抖和节流？有什么区别？如何实现？
+防抖: 触发高频事件后n秒内函数只会执行一次，如果n秒内高频事件再次被触发，则重新计算时间
+```js
+function debounce(fn){
+  let timer=null
+  return function(){
+    clearTimeout(timer)
+    timer=setTimeout(()=>{
+      fn.apply(this,arguments)
+    },500)
+  }
+}
+function sayHi() {
+  console.log('防抖成功');
+}
+var inp = document.getElementById('inp');
+inp.addEventListener('input', debounce(sayHi)); // 防抖
+```
+
+节流： 高频事件触发，但在n秒内只会执行一次，所以节流会稀释函数的执行频率
+
+```js
+function throttle(){
+  let canRun=true
+  return function(){
+    if(!canRun) return
+    canRun=false
+    setTimeout(()=>{
+      fn.apply(this.arguments)
+      canRun=true
+    },500)
+  }
+}
+function sayHi(e) {
+  console.log(e.target.innerWidth, e.target.innerHeight);
+}
+window.addEventListener('resize', throttle(sayHi));
+```
+
+
+# 4. 
+```js
+async function async1() {
+    console.log('async1 start');
+    await async2();
+    console.log('async1 end');
+}
+async function async2() {
+    console.log('async2');
+}
+console.log('script start');
+setTimeout(function() {
+    console.log('setTimeout');
+}, 0)
+async1();
+new Promise(function(resolve) {
+    console.log('promise1');
+    resolve();
+}).then(function() {
+    console.log('promise2');
+});
+console.log('script end');
+```
+结果 script start=>async1 start=>async2=>promise1=>script end=>async1 end=>promise2=>setTimeout
+
+分析：
+执行一个宏任务（栈中没有就从事件队列中获取）
+执行过程中如果遇到微任务，就将它添加到微任务的任务队列中
+宏任务执行完毕后，立即执行当前微任务队列中的所有微任务（依次执行）
+当前宏任务执行完毕，开始检查渲染，然后GUI线程接管渲染
+渲染完毕后，JS线程继续接管，开始下一个宏任务（从事件队列中获取）
+```js
+async function async1() {
+	console.log('async1 start');
+	await async2();
+	console.log('async1 end');
+}
+等价于
+async function async1() {
+	console.log('async1 start');
+	Promise.resolve(async2()).then(() => {
+                console.log('async1 end');
+        })
+}
+```
+
+## 变式一
+```js
+async function async1() {
+    console.log('async1 start');
+    await async2();
+    console.log('async1 end');
+}
+async function async2() {
+    //async2做出如下更改：
+    new Promise(function(resolve) {
+    console.log('promise1');
+    resolve();
+}).then(function() {
+    console.log('promise2');
+    });
+}
+console.log('script start');
+
+setTimeout(function() {
+    console.log('setTimeout');
+}, 0)
+async1();
+
+new Promise(function(resolve) {
+    console.log('promise3');
+    resolve();
+}).then(function() {
+    console.log('promise4');
+});
+
+console.log('script end');
+```
+
+```
+script start
+async1 start
+promise1
+promise3
+script end
+promise2
+async1 end
+promise4
+setTimeout
+```
+## 变式二
+```js
+async function async1() {
+    console.log('async1 start');
+    await async2();
+    //更改如下：
+    setTimeout(function() {
+        console.log('setTimeout1')
+    },0)
+}
+async function async2() {
+    //更改如下：
+	setTimeout(function() {
+		console.log('setTimeout2')
+	},0)
+}
+console.log('script start');
+
+setTimeout(function() {
+    console.log('setTimeout3');
+}, 0)
+async1();
+
+new Promise(function(resolve) {
+    console.log('promise1');
+    resolve();
+}).then(function() {
+    console.log('promise2');
+});
+console.log('script end');
+
+```
+script start
+async1 start
+promise1
+script end
+promise2
+setTimeout3
+setTimeout2
+setTimeout1
+
+
+## 变式三
+```js
+async function a1 () {
+    console.log('a1 start')
+    await a2()
+    console.log('a1 end')
+}
+async function a2 () {
+    console.log('a2')
+}
+
+console.log('script start')
+
+setTimeout(() => {
+    console.log('setTimeout')
+}, 0)
+
+Promise.resolve().then(() => {
+    console.log('promise1')
+})
+
+a1()
+
+let promise2 = new Promise((resolve) => {
+    resolve('promise2.then')
+    console.log('promise2')
+})
+
+promise2.then((res) => {
+    console.log(res)
+    Promise.resolve().then(() => {
+        console.log('promise3')
+    })
+})
+console.log('script end')
+
+```
+script start
+a1 start
+a2
+promise2
+script end
+promise1
+a1 end
+promise2.then
+promise3
+setTimeout
+
+
+
+# 5
+已知如下数组：
+var arr = [ [1, 2, 2], [3, 4, 5, 5], [6, 7, 8, 9, [11, 12, [12, 13, [14] ] ] ], 10];
+
+自己笨拙的实现
+```js
+let temp = []
+var arr = [[1, 2, 2], [3, 4, 5, 5], [6, 7, 8, 9, [11, 12, [12, 13, [14]]]], 10];
+function flat(arr) {
+  for (let i = 0; i < arr.length; i++) {
+    if (Array.isArray(arr[i])) {
+      flat(arr[i])
+    } else {
+      temp.push(arr[i])
+    }
+  }
+}
+flat(arr)
+console.log(temp)
+
+console.log(new Set(temp.sort((a, b) => {
+  return a - b
+})))
+```
+大佬的实现
+```js
+var arr = [[1, 2, 2], [3, 4, 5, 5], [6, 7, 8, 9, [11, 12, [12, 13, [14]]]], 10];
+Array.prototype.flat = function () {
+  return [].concat(...this.map(item => Array.isArray(item) ? item.flat() : item))
+}
+Array.prototype.unique = function () {
+  return [...new Set(this)]
+}
+const sort = (a, b) => a - b
+console.log(arr.flat().unique().sort(sort))
+```
+大佬二的实现
+```js
+[...new Set(String(arr).split(','))].sort((a, b) => a - b).map(Number)
+```
+
+
+
+# 6
+最早的异步的实现应该:
+1. 回调函数 缺点： 回调地狱，不利于维护
+2. promise 可以链式调用了 解决了回调地狱， 但是无法取消promise 一旦开启只有pending resolve reject 不能取消
+3. generator
+yield next
+语义化不好，不利于理解
+4. async await 不是所有场景都使用 注意性能问题 可以用try catch 捕获异常，将异步代码改成同步代码，如果多个操作没有依赖性 会造成性能问题
+
+# 7 Promise 构造函数是同步执行还是异步执行，那么 then 方法呢？
+promise构造函数是同步执行的，then方法是异步执行的
+```js
+const promise = new Promise((resolve, reject) => {
+  console.log(1);
+  resolve(5);
+  console.log(2);
+}).then(val => {
+  console.log(val);
+});
+
+promise.then(() => {
+  console.log(3);
+});
+
+console.log(4);
+
+setTimeout(function() {
+  console.log(6);
+});
+```
+执行结果: 124536
+
+# 情人节福利题，如何实现一个 new 
+// new 的作用
+// 创建一个新对象obj
+// 把obj的__proto__指向fn.prototype 实现继承
+// 执行构造函数，传递参数，改变this指向 Dog.call(obj, ...args)
+// 最后把obj赋值
+function _new(){
+let constructor=Array.prototype.shift(argument)
+let args=argument
+let obj=Object.create(constructor.prototype)
+let  ret =construcotr.apply(obj,args)
+return ret instanceof Object?ret:obj
+}
+
+变形一
+简述Object.create的实现
+```
+Object.myCreate=function(obj,properties){
+  let Fn=Function(){}
+  Fn.prototype=obj
+  if(properties){
+    Object.defineProperties(Fn,properties)
+  }
+  reutrn  new Fn()
+}
+```
+
+
+# React setState 笔试题，下面的代码输出什么？
+```js
+class Example extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      val: 0
+    };
+  }
+  
+  componentDidMount() {
+    this.setState({val: this.state.val + 1});
+    console.log(this.state.val);    // 第 1 次 log  0
+
+    this.setState({val: this.state.val + 1});
+    console.log(this.state.val);    // 第 2 次 log  0
+
+    setTimeout(() => {
+      this.setState({val: this.state.val + 1});
+      console.log(this.state.val);  // 第 3 次 log  2
+
+      this.setState({val: this.state.val + 1});
+      console.log(this.state.val);  // 第 4 次 log  3
+    }, 0);
+  }
+
+  render() {
+    return null;
+  }
+};
+```
+
+在React的setState函数实现中，会根据一个变量 isBatchingUpdate 来判断是直接同步更新this.state还是放到队列中异步更新 。React使用了事务的机制，React的每个生命周期和合成事件都处在一个大的事务当中。在事务的前置钩子中调用batchedUpdates方法修改isBatchingUpdates变量为true，在后置钩子中将变量置为false。原生绑定事件和setTimeout异步的函数没有进入到React的事务当中，或者当他们执行时，刚刚的事务已近结束了，后置钩子触发了，所以此时的setState会直接进入非批量更新模式，表现在我们看来成为了同步SetState。
+
+在React中，如果是由React引发的事件处理（比如通过onClick引发的事件处理），调用setState不会同步更新this.state，除此之外的setState调用会同步执行this.state。所谓“除此之外”，指的是绕过React通过addEventListener直接添加的事件处理函数，还有通过setTimeout/setInterval产生的异步调用。
+
+**原因：**在React的setState函数实现中，会根据一个变量isBatchingUpdates判断是直接更新this.state还是放到队列中回头再说，而isBatchingUpdates默认是false，也就表示setState会同步更新this.state，但是，有一个函数batchedUpdates，这个函数会把isBatchingUpdates修改为true，而当React在调用事件处理函数之前就会调用这个batchedUpdates，造成的后果，就是由React控制的事件处理过程setState不会同步更新this.state。
+
+```md
+[React] React Hooks 中使用 setTimeout #20  https://github.com/cheungseol/cheungseol.github.io/issues/20
+问题
+在hooks 中使用 setTimeout 方法，方法中访问到的函数 state 始终是初始值，而不是更新后的最新 state
+
+demo
+在这个例子中，首先执行setCount 将 count 设为 5， 然后经过 3 秒后执行 setCountInTimeout， 将 countInTimeout 的值设置为count 的值
+
+我们最初期望的是 这时候 countInTimeout 就等于 此刻 count 最新的值 5， 然而 countInTimeout 却保持了最开始的 count 值 0
+
+import React, { useEffect, useState } from 'react';
+
+const TimeoutExample = () => {
+  const [count, setCount] = useState(0);
+  const [countInTimeout, setCountInTimeout] = useState(0);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setCountInTimeout(count); // count is 0 here
+    }, 3000);
+    setCount(5); // Update count to be 5 after timeout is scheduled
+  }, []);
+
+  return (
+    <div>
+      Count: {count}
+      <br />
+      setTimeout Count: {countInTimeout}
+    </div>
+  );
+};
+
+export default TimeoutExample;
+原因
+setTimeout 是一个闭包，setTimeout 函数执行的时候使用的参数 count 读取自setTimeout 函数创建的时候，即 0。 setTimeout 使用闭包的方式异步访问 count 的值。当整个函数组件re-render的时候，会创建出一个新的 setTimeout 函数一个新的闭包，但并没有改变最初封装它的那个闭包的值
+
+作者也提到这么设计的初衷是满足这样的场景：比如订阅了一个ID，当随后需要取消订阅的时候，避免ID发生变化而造成不能取消订阅的问题
+
+解决方法
+使用一个 container 来把最新的 state 也就是 count 的值穿进去，并在随后的 timeout 函数中读取最新的 state 。
+
+可以使用 useRef。 通过 ref's current 来同步最新的 state, 然后在 timeout 函数中读取 current 的值。使用 ref 在异步callback函数中访问最新的 当前的 state
+
+const countRef = useRef(count);
+countRef.current = count;
+
+const getCountTimeout = () => {
+  setTimeout(() => {
+    setTimeoutCount(countRef.current);
+  }, 2000);
+};
+```
+
+
+# 算法题「移动零」，给定一个数组 nums，编写一个函数将所有 0 移动到数组的末尾，同时保持非零元素的相对顺序。
+```
+function zeroMove(arr){
+  for(let i=arr.len-1;i>=0;i--){
+    if(arr[i]===0){
+      arr.splice(i,1)
+      arr.push(0)
+    }
+  }
+}
+```
+```js
+ function zeroMove(arr) {
+    const filter = arr.filter(v => v);
+    return [...filter, ...Array(arr.length - filter.length).fill(0)]
+  }
+```
+
+```
+首先，题意是要在原地修改数组，那么sort，concat之类的纯函数方法就是行不通的了，因为是返回新的数组，而不是在原地修改
+其次，splice的时间复杂度是O(n)，那么使用splice的算法的时间复杂度是O(n2)，既然在写算法，那么就要寻求时间复杂度与空间复杂度最低的办法。
+思路：双指针
+设定一个慢指针一个快指针，快指针每次+1， 当慢指针的值不等于0的时候也往后移动，当慢指针等于0并且快指针不等于0的时候，交换快慢指针的值，慢指针再+1
+function moveZero(arr) {
+  let i = 0
+  let j = 0
+  while (j < arr.length) {
+    if (arr[i] !== 0) {
+      i++
+    } else if (arr[j] !== 0) {
+      ;[arr[i], arr[j]] = [arr[j], arr[i]]
+      i++
+    }
+    j++
+  }
+}
+时间复杂度O(n)，n是数组长度，空间复杂度O(1)
+```
+
+
+# 请实现一个 add 函数，满足以下功能。
+```js
+add(1); 			// 1
+add(1)(2);  	// 3
+add(1)(2)(3)；// 6
+add(1)(2, 3); // 6
+add(1, 2)(3); // 6
+add(1, 2, 3); // 6
+```
+
+
+
+
+
+# 已知如下代码，如何修改才能让图片宽度为 300px ？注意下面代码不可修改
+```
+<img src="1.jpg" style="width:480px!important;”>
+总结一下
+1、给图片设置max-width:300px
+2、给图片设置transform: scale(0.625,0.625)，但是占据的位置还是原来的480px
+3、给图片设置box-sizing: border-box;padding: 0 90px;，但图片左右会有90px的内边距
+4、给图片设置zoom: 0.625
+5、js获取元素使用imgs[0].setAttribute("style","width:300px!important;")或者imgs[0].style.cssText='width:300px;'
+6、给图片设置动画，from{width:300px;}to{width:300px;}，动画时间为0s，原理是CSS动画的样式优先级高于!important的特性
+```
