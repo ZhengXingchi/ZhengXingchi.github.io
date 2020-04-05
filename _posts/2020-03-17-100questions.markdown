@@ -8,6 +8,36 @@ tags:
     - 前端开发
 ---
 
+
+# 要求设计 LazyMan 类，实现以下功能。
+```js
+LazyMan('Tony');
+// Hi I am Tony
+
+LazyMan('Tony').sleep(10).eat('lunch');
+// Hi I am Tony
+// 等待了10秒...
+// I am eating lunch
+
+LazyMan('Tony').eat('lunch').sleep(10).eat('dinner');
+// Hi I am Tony
+// I am eating lunch
+// 等待了10秒...
+// I am eating diner
+
+LazyMan('Tony').eat('lunch').eat('dinner').sleepFirst(5).sleep(10).eat('junk food');
+// Hi I am Tony
+// 等待了5秒...
+// I am eating lunch
+// I am eating dinner
+// 等待了10秒...
+// I am eating junk food
+```
+[解析](https://github.com/ZhengXingchi/ZhengXingchi.github.io/issues/5)
+
+
+
+
 # 1. 写 React / Vue 项目时为什么要在列表组件中写 key，其作用是什么
 ```md
 answer:
@@ -1242,3 +1272,6 @@ async function deepCopyByMessageChannel(target) {
 
 # bfc及其原理
 [BFC及其原理解析](https://github.com/wlf1112/FE_Interview/issues/2)
+
+
+# [介绍下深度优先遍历和广度优先遍历，如何实现](https://github.com/ZhengXingchi/ZhengXingchi.github.io/issues/1)
